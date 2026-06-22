@@ -1,4 +1,4 @@
-# Personal Expense Tracker
+# Monthly Expense Tracker
 A simple, responsive web application designed to help you log and monitor your monthly expenses. The project focuses on simplicity, clear data visualization, and an intuitive user experience.
 
 ## Features
