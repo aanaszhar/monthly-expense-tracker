@@ -1,0 +1,2 @@
+# Monthly Expense Tracker
+A simple and reliable expense tracking web application built with HTML, CSS, JavaScript, and Bootstrap. Features include category filtering, local storage persistence, and CSV data export.

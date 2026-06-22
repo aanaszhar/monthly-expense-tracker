@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container app-container">
+    <div class="row">
+        
+        <div class="col-md-4">
+            
+            <div class="settings-card shadow-sm">
+                <h4 class="mb-3">Settings</h4>
+                <label class="form-label font-weight-bold" for="maxExpenseInput">Max Monthly Expense (RM)</label>
+                <input type="number" id="maxExpenseInput" class="form-control" placeholder="e.g. 1000" min="0" step="0.01">
+                <button id="saveLimitBtn" class="btn btn-blue mt-3 w-100">Set Limit</button>
+                <small class="text-muted d-block mt-2">Bars turn red if a month exceeds this limit. Set to 0 for no limit.</small>
+                
+                <hr class="border-secondary mt-4 mb-4">
+                
+                <h5 class="mb-3">Data Management</h5>
+                <button id="exportCsvBtn" class="btn btn-light-blue w-100 mb-3">Export to CSV</button>
+                <button id="clearDataBtn" class="btn btn-outline-danger w-100">Clear All Data</button>
+            </div>
+
+            <div class="pie-chart-card shadow-sm">
+                <h4 class="mb-3">Monthly Breakdown</h4>
+                <div id="pieChartPlaceholder" class="text-muted text-center mt-4 mb-4">
+                    Select a month from the bar chart to view its breakdown.
+                </div>
+                <canvas id="typePieChart" style="display: none;"></canvas>
+            </div>
+
+        </div>
+
+        <div class="col-md-8">
+            
+            <div class="d-flex justify-content-between gap-3 mb-3">
+                <button id="toggleFormBtn" class="btn-light-blue flex-grow-1 m-0">Add New Expense</button>
+                <button id="themeToggleBtn" class="btn btn-outline-secondary bg-white text-dark">Toggle Theme</button>
+            </div>
+
+            <div class="form-card shadow-sm" id="expenseFormCard">
+                <form id="expenseForm" novalidate>
+                    <input type="hidden" id="editId" value="">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label font-weight-bold" for="titleInput">Title</label>
+                            <input type="text" class="form-control" id="titleInput" placeholder="e.g. Groceries">
+                            <div class="invalid-feedback">Please enter a title.</div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <label class="form-label font-weight-bold" for="amountInput">Amount (RM)</label>
+                            <input type="number" step="0.01" class="form-control" id="amountInput" placeholder="0.00">
+                            <div class="invalid-feedback">Please enter a valid positive amount.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label font-weight-bold" for="dateInput">Date</label>
+                            <input type="date" class="form-control" id="dateInput">
+                            <div class="invalid-feedback">Please select a date.</div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <label class="form-label font-weight-bold" for="typeInput">Type</label>
+                            <select class="form-select" id="typeInput">
+                                <option value="" disabled selected>Select a type...</option>
+                                <option value="Housing">Housing</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Food & Dining">Food & Dining</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Entertainment & Subscription">Entertainment & Subscription</option>
+                                <option value="Debt Repayment">Debt Repayment</option>
+                                <option value="Personal Care">Personal Care</option>
+                            </select>
+                            <div class="invalid-feedback">Please select an expense type.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label font-weight-bold" for="notesInput">Notes / Remarks</label>
+                            <textarea class="form-control" id="notesInput" rows="2" placeholder="Optional notes..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-blue" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-blue" id="submitBtn">Save Expense</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="main-card shadow-sm">
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="font-weight-bold">Filter by year</span>
+                    <select id="yearFilter" class="form-select w-auto"></select>
+                </div>
+
+                <div class="chart-container" id="chartContainer"></div>
+
+                <div class="row mb-3 g-2">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dropdown w-100">
+                            <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center bg-white text-dark text-start" type="button" id="typeFilterDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                Filter: All Categories
+                            </button>
+                            <ul class="dropdown-menu w-100 shadow-sm p-2" id="typeFilterContainer">
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="sortFilter" class="form-select">
+                            <option value="date-desc">Sort: Newest First</option>
+                            <option value="date-asc">Sort: Oldest First</option>
+                            <option value="amount-desc">Sort: Highest Amount</option>
+                            <option value="amount-asc">Sort: Lowest Amount</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="expenseList"></div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="chartTooltip"></div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
