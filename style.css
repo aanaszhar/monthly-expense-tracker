@@ -1,14 +1,5 @@
-/* =========================================
-   TABLE OF CONTENTS
-   1. Base & Layout
-   2. Cards & Containers
-   3. Form & Buttons
-   4. Monthly Diagram Chart
-   5. Expense List Items
-   6. Light Mode Theme
-   ========================================= */
 
-/* --- 1. Base & Layout --- */
+/* base */
 body {
     background-color: #3f3f3f;
     color: white;
@@ -42,7 +33,7 @@ body {
     color: #ccc;
 }
 
-/* --- 2. Cards & Containers --- */
+/* cards & containers */
 .settings-card, 
 .pie-chart-card, 
 .main-card {
@@ -94,7 +85,7 @@ body {
     cursor: pointer;
 }
 
-/* --- 4. Monthly Diagram Chart --- */
+/* monthly diagram */
 .chart-container {
     background-color: #f8f9fa;
     border-radius: 10px;
@@ -150,7 +141,7 @@ body {
     box-sizing: border-box;
 }
 
-/* --- 5. Expense List Items --- */
+/*expense list items*/
 .expense-item {
     background-color: #444;
     border-radius: 10px;
@@ -230,7 +221,7 @@ body {
 .edit-btn { color: #ffb84d; }
 
 
-/* --- 6. Light Mode Theme --- */
+/* light mode theme */
 body.light-mode {
     background-color: #f4f6f9;
     color: #333;

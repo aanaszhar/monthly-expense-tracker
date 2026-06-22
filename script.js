@@ -1,8 +1,5 @@
 $(document).ready(function() {
 
-    // =========================================
-    // 1. CONSTANTS & DOM CACHE
-    // =========================================
     const COLORS = {
         'Housing': '#ff6384',
         'Utilities': '#36a2eb',
@@ -16,7 +13,6 @@ $(document).ready(function() {
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const ALLOWED_YEARS = ['2026', '2025'];
     
-    // DOM Elements Cached for Performance
     const $yearFilter = $('#yearFilter');
     const $chartContainer = $('#chartContainer');
     const $expenseList = $('#expenseList');
@@ -26,35 +22,26 @@ $(document).ready(function() {
     const $form = $('#expenseForm');
     const $tooltip = $('#chartTooltip');
 
-    // =========================================
-    // 2. STATE MANAGEMENT
-    // =========================================
     let expenses = [];
     let maxMonthlyLimit = parseFloat(localStorage.getItem('myMaxExpense')) || 0;
     let activeMonthFilter = null; 
     let pieChartInstance = null; 
     let searchQuery = ""; 
 
-    // =========================================
-    // 3. INITIALIZATION
-    // =========================================
+
     function init() {
-        // Load Theme
         if (localStorage.getItem('myTheme') === 'light') {
             $('body').addClass('light-mode');
         }
 
-        // Load Settings
         if (maxMonthlyLimit) {
             $('#maxExpenseInput').val(maxMonthlyLimit);
         }
 
-        // Load Data
         let savedData = localStorage.getItem('myExpenses_v6'); 
         if (savedData) {
             expenses = JSON.parse(savedData);
         } else {
-            // Uses data.js if available, otherwise empty
             expenses = typeof defaultExpensesData !== 'undefined' ? defaultExpensesData : [];
             saveData();
         }
@@ -67,11 +54,7 @@ $(document).ready(function() {
         localStorage.setItem('myExpenses_v6', JSON.stringify(expenses));
     }
 
-    // =========================================
-    // 4. EVENT LISTENERS
-    // =========================================
-    
-    // --- Filters & Search ---
+
     $yearFilter.change(() => { activeMonthFilter = null; updateScreen(); });
     $('#sortFilter').change(() => updateScreen());
     $('#searchInput').on('input', function() {
@@ -79,14 +62,12 @@ $(document).ready(function() {
         updateScreen(); 
     });
 
-    // --- Diagram Click ---
     $(document).on('click', '.chart-col', function() {
         let clickedMonth = $(this).data('month');
         activeMonthFilter = (activeMonthFilter === clickedMonth) ? null : clickedMonth;
         updateScreen();
     });
 
-    // --- Settings Panel ---
     $('#themeToggleBtn').click(() => {
         $('body').toggleClass('light-mode');
         localStorage.setItem('myTheme', $('body').hasClass('light-mode') ? 'light' : 'dark');
@@ -126,7 +107,6 @@ $(document).ready(function() {
         }
     });
 
-    // --- Form Handling ---
     $('#toggleFormBtn').click(() => { closeForm(); $formCard.slideToggle(); });
     $('#cancelBtn').click(() => closeForm());
 
@@ -191,7 +171,6 @@ $(document).ready(function() {
         }
     });
 
-    // --- Dropdown Category Filters ---
     $(document).on('change', '#selectAllTypes', function() {
         $('.type-checkbox').prop('checked', $(this).is(':checked'));
         updateDropdownLabel();
@@ -205,7 +184,6 @@ $(document).ready(function() {
         updateScreen();
     });
 
-    // --- Tooltips ---
     $(document).on('mouseenter', '.chart-col', function() {
         $tooltip.text('RM ' + $(this).data('total')).show();
     }).on('mousemove', '.chart-col', function(e) {
@@ -214,9 +192,6 @@ $(document).ready(function() {
         $tooltip.hide();
     });
 
-    // =========================================
-    // 5. CORE LOGIC & RENDERING
-    // =========================================
     
     function closeForm() {
         $formCard.slideUp(); 
@@ -263,13 +238,11 @@ $(document).ready(function() {
     }
 
     function updateScreen() {
-        // Year Dropdown logic
         let currentChoice = $yearFilter.val() || '2026';
         $yearFilter.empty();
         ALLOWED_YEARS.forEach(y => $yearFilter.append(`<option value="${y}">${y}</option>`));
         $yearFilter.val(currentChoice);
 
-        // Filter Pipeline
         let filtered = expenses.filter(exp => exp.date.substring(0, 4) === currentChoice);
         
         let checkedTypes = $('.type-checkbox:checked').map(function() { return this.value; }).get();
@@ -400,6 +373,5 @@ $(document).ready(function() {
         });
     }
 
-    // Start App
     init();
 });
